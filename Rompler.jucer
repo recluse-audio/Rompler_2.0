@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="wD074e" name="Rompler" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="recluse-audio" companyEmail="artie@recluse-audio.com"
+              pluginManufacturerCode="Recl" pluginVST3Category="Instrument,Sampler,Synth"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
+  <MAINGROUP id="motkF3" name="Rompler">
+    <GROUP id="{4E7C4DC6-691C-F961-12DF-CE2BDBD4768D}" name="Source">
+      <GROUP id="{50825C40-59AE-1080-0143-243BBA595074}" name="Resources">
+        <FILE id="c8lMuY" name="Spyder_Sound.svg" compile="0" resource="1"
+              file="../../Artie_Photos/Spyder_Sound.svg"/>
+        <FILE id="Od7Pa7" name="LOGO_SVG.svg" compile="0" resource="1" file="../../Artie_Photos/Recluse/LOGO_SVG.svg"/>
+      </GROUP>
+      <GROUP id="{A342E480-93DA-2A0C-2B32-508D08EE327D}" name="LookNFeel">
+        <FILE id="J4WtL7" name="PulsarUIFeel.cpp" compile="1" resource="0"
+              file="Source/PulsarUIFeel.cpp"/>
+        <FILE id="fPuP7J" name="PulsarUIFeel.h" compile="0" resource="0" file="Source/PulsarUIFeel.h"/>
+      </GROUP>
+      <GROUP id="{32C389D4-3D1E-B44A-0C8E-65D24910DBE6}" name="Romples">
+        <GROUP id="{2277F4AA-407F-F1CA-E875-D7750AB56AAE}" name="Romple Menu">
+          <FILE id="sv824b" name="RompMenu.cpp" compile="1" resource="0" file="Source/RompMenu.cpp"/>
+          <FILE id="ddbzgd" name="RompMenu.h" compile="0" resource="0" file="Source/RompMenu.h"/>
+        </GROUP>
+        <GROUP id="{0EEAD82A-4F46-076B-4DE1-E33F53B36EA4}" name="Romple Data">
+          <FILE id="yMqjov" name="Artist.h" compile="0" resource="0" file="Source/Artist.h"/>
+          <FILE id="oeONvc" name="Database.h" compile="0" resource="0" file="Source/Database.h"/>
+        </GROUP>
+      </GROUP>
+      <GROUP id="{17E20E57-57FD-60DF-C85C-4515B068285C}" name="Processor">
+        <FILE id="qjn2Ht" name="PluginProcessor.cpp" compile="1" resource="0"
+              file="Source/PluginProcessor.cpp"/>
+        <FILE id="kkuUCJ" name="PluginProcessor.h" compile="0" resource="0"
+              file="Source/PluginProcessor.h"/>
+        <FILE id="lVEy64" name="RomplerSound.h" compile="0" resource="0" file="Source/RomplerSound.h"/>
+        <FILE id="J9mVaF" name="RomplerSynth.h" compile="0" resource="0" file="Source/RomplerSynth.h"/>
+      </GROUP>
+      <GROUP id="{D447AF32-4749-A0A8-FBE5-B0F185F852B6}" name="Editor">
+        <FILE id="jwNw9w" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/PluginEditor.cpp"/>
+        <FILE id="uGfmoO" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      </GROUP>
+      <GROUP id="{A9F29505-635E-4CA9-8EE4-6B37E63A00DE}" name="Components">
+        <FILE id="PzRSU0" name="ADSRComponent.cpp" compile="1" resource="0"
+              file="Source/ADSRComponent.cpp"/>
+        <FILE id="CpbbA9" name="ADSRComponent.h" compile="0" resource="0" file="Source/ADSRComponent.h"/>
+        <FILE id="UevvRe" name="DrawableComponent.h" compile="0" resource="0"
+              file="Source/DrawableComponent.h"/>
+        <FILE id="a7VmIB" name="WaveThumbnail.cpp" compile="1" resource="0"
+              file="Source/WaveThumbnail.cpp"/>
+        <FILE id="IQTzuP" name="WaveThumbnail.h" compile="0" resource="0" file="Source/WaveThumbnail.h"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Rompler"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Rompler"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE_Home/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE_Home/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
