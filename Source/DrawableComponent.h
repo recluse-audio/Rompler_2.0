@@ -18,7 +18,7 @@
 class DrawableComponent  : public juce::Component
 {
 public:
-    DrawableComponent()
+    DrawableComponent(RomplerAudioProcessor& p) : audioProcessor(p)
     {
         selectDrawable(0);
     }
@@ -29,8 +29,9 @@ public:
 
     void paint (juce::Graphics& g) override
     {
+        auto alpha = audioProcessor.getRMSValue(0) + audioProcessor.getRMSValue(1);
         logo->setTransformToFit(getLocalBounds().toFloat(), RectanglePlacement::stretchToFit);
-        logo->drawAt(g, 0, 0, 1.f);
+        logo->drawAt(g, 0, 0, 0.1f + alpha);
     }
 
     void resized() override
@@ -48,14 +49,20 @@ public:
                xmlData = BinaryData::LOGO_SVG_svg;
                break;
            case 1:
-               xmlData = BinaryData::Spyder_Sound_svg;
+               xmlData = BinaryData::LOGO_SVG_svg;
                break;
         }
-        std::unique_ptr<XmlElement> svg = XmlDocument::parse(BinaryData::LOGO_SVG_svg);
+        std::unique_ptr<XmlElement> svg = XmlDocument::parse(BinaryData::KingsRest_LOGO_svg);
         jassert(svg != nullptr);
 
         if (svg != nullptr)
         {
+           // auto path = svg->getChildByName("g")->getChildByName("path");
+            //String newStyle = { "fill:#ffffff;fill-opacity:1;stroke-width:0.264583" };
+
+          //  path->setAttribute("style", newStyle);
+
+
             logo = Drawable::createFromSVG(*svg);
             logo->setAlwaysOnTop(true);
         }
@@ -64,6 +71,6 @@ public:
 private:
     std::unique_ptr<Drawable> logo;
 
-
+    RomplerAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrawableComponent)
 };

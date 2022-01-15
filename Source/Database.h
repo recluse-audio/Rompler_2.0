@@ -27,7 +27,9 @@ public:
 
     void initFiles()
     {
-        auto artistFolders = juce::File("C:/ProgramData/Recluse-Audio/Rompler/").findChildFiles(File::findDirectories, false);
+        reset();
+        auto artistFolders = juce::File("C:/ProgramData/Recluse-Audio/Rompler/Romples/").findChildFiles(File::findDirectories, false);
+
 
         for (int i = 0; i < artistFolders.size(); i++)
         {
@@ -55,6 +57,7 @@ public:
 
     juce::String& getFilePathFromIndex(int index) 
     { 
+
         return filePaths.getReference(index); 
     }
 
@@ -63,7 +66,13 @@ public:
         return fileNames.getReference(index);
     }
 
-
+    void reset()
+    {
+        artists.clear(true);
+        filePaths.clear();
+        fileNames.clear();
+        categoryNames.clear();
+    }
     
 private:
     juce::OwnedArray<Artist> artists;

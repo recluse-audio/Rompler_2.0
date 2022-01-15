@@ -12,7 +12,7 @@
 #include "RompMenu.h"
 
 //==============================================================================
-RompMenu::RompMenu(RomplerAudioProcessor& p) : audioProcessor(p), database()
+RompMenu::RompMenu(RomplerAudioProcessor& p) : audioProcessor(p), database(p.getDatabase())
 {
     setLookAndFeel(&pulsarFeel);
 
@@ -23,6 +23,7 @@ RompMenu::RompMenu(RomplerAudioProcessor& p) : audioProcessor(p), database()
     rompleLabel = std::make_unique<Label>("");
     addAndMakeVisible(rompleLabel.get());
     prepareMenu();
+
 }
 
 RompMenu::~RompMenu()
@@ -41,7 +42,7 @@ void RompMenu::paint (juce::Graphics& g)
 
 void RompMenu::resized()
 {
-    menuButton->setBoundsRelative(0.8f, 0.05f, 0.175f, 0.7f);
+    menuButton->setBoundsRelative(0.8f, 0.05f, 0.2f, 0.7f);
     //rompleLabel->setBoundsRelative(0.05f, 0.05f, 0.3f, 0.7f);
 
 }
@@ -58,6 +59,7 @@ void RompMenu::buttonClicked(Button* b)
 {
     if (b == menuButton.get())
     {
+        prepareMenu();
         auto menuArea = Rectangle<int>(getScreenX(), getScreenY() - getParentHeight(), getParentWidth(), getParentHeight());
         int selection = menu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
 
@@ -67,18 +69,26 @@ void RompMenu::buttonClicked(Button* b)
         }
         if (selection > 0)
         {
-            auto path = database.getFilePathFromIndex(selection - 1); // item id's start at 1, but passing to a vector storign file paths at [0]
-            audioProcessor.loadFile(path);
-
-            fileName = database.getFileNameFromIndex(selection - 1);
-            audioProcessor.setRompleName(fileName);
+            audioProcessor.loadFileSelection(selection - 1);
+            //loadFile(selection);
         }
     }
     repaint();
 }
 
+// Here I am passing a value to the apvts, then calling 'loadFileSelection()' in the processor
+// which then grabs that same value from the apvts (which it holds)
+// I do this because I need to save what selection it is in the apvts and load it there as well
+void RompMenu::loadFile(int selection)
+{
+
+
+    
+}
+
 void RompMenu::prepareMenu()
 {
+    menu.clear();
     menu.setLookAndFeel(&pulsarFeel);
 
     menu.addSectionHeader("Artists");
@@ -111,4 +121,6 @@ void RompMenu::prepareMenu()
 
     
 }
+
+
 

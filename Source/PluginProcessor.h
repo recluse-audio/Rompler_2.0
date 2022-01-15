@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "RomplerSound.h"
+#include "Database.h"
 
 //==============================================================================
 /**
@@ -57,13 +58,17 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    void loadFile();
+    void saveRomple(StringRef rompleName, StringRef categoryName); // saves current romple to user romples directory
+    void savePreset(StringRef presetPath);
+    void loadPreset(StringRef presetPath);
+    void loadUserFile(File file);
+    void loadFileSelection(int selection); // loads from apvts
     void loadFile (const String& path);
     
     int getNumSamplerSounds() { return mSampler.getNumSounds(); }
     AudioBuffer<float>& getWaveForm();
     
-    void updateADSR();
+    void update();
     ADSR::Parameters& getADSRParams() { return mADSRParams; }
     
     AudioProcessorValueTreeState& getValueTree() { return mAPVTS; }
@@ -76,9 +81,13 @@ public:
     void flipStereoRomple();
     void reverseRomple();
 
-    void setRompleName(StringRef name);
     StringRef getRompleName();
+    bool checkIfUserRomple();
+
+    Database& getDatabase();
 private:
+    Database database;
+
     /* Setting smoothed value which will be retrieved from when getRMSValue() is called*/
     void setSmoothedRMSValue(Array<float> channelArray);
     Array <float> smoothedRMSArray;
@@ -99,10 +108,23 @@ private:
     
     std::atomic<bool> mShouldUpdate { false };
     std::atomic<bool> mIsNotePlayed { false };
+    std::atomic<bool> isReversed    { false };
+    std::atomic<bool> isFlipped     { false };
     std::atomic<int> mSampleCount { 0 };
 
+    bool isUserRomple = false;
+
     String rompleName{ "" };
-    
+    String romplePath{ "" };
+    String userPath{ "C:/ProgramData/Recluse-Audio/Rompler/Romples/User Romples/" };
+    String userPresetPath{ "C:/ProgramData/Recluse-Audio/Rompler/Presets/User Presets/" };
+
+    String mainTag{ "romplerxml" };
+    String treeTag{ "treexml" };
+    String pathTag{ "pathxml" };
+    String pathAttribute{ "pathattribute" };
+    String flipAttribute{ "isflipped" };
+    String reverseAttribute{ "isreversed" };
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RomplerAudioProcessor)
 };

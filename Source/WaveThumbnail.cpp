@@ -18,12 +18,13 @@ WaveThumbnail::WaveThumbnail (RomplerAudioProcessor& p) : processor (p)
     setLookAndFeel(&pulsarFeel);
 
     rompleLabel = std::make_unique<Label>("");
-    rompleLabel->setAlwaysOnTop(true);
+    rompleLabel->setAlwaysOnTop(false);
     rompleLabel->setFont(40.f);
+    rompleLabel->setColour(Label::backgroundColourId, Colours::transparentBlack.withAlpha(0.f));
     addAndMakeVisible(rompleLabel.get());
 
     dropLabel = std::make_unique<Label>("Drop or Load");
-    dropLabel->setAlwaysOnTop(true);
+    dropLabel->setAlwaysOnTop(false);
     dropLabel->setFont(40.f);
     addAndMakeVisible(dropLabel.get());
 }
@@ -67,6 +68,8 @@ void WaveThumbnail::paint (Graphics& g)
         dropLabel->setFont(40.f);
         dropLabel->setText("Drop or Load", NotificationType::sendNotificationAsync);
         dropLabel->setVisible(true);
+
+        rompleLabel->setText("", juce::NotificationType::dontSendNotification);
     }
 }
 
@@ -84,7 +87,7 @@ void WaveThumbnail::drawMono(Graphics& g, AudioBuffer<float>& waveform)
         mAudioPoints.push_back(buffer[sample]);
     }
 
-    g.setColour(Colours::lightgreen);
+    g.setColour(Colours::yellow);
     p.startNewSubPath(0, getHeight() / 2);
 
     //scale on y axis
@@ -115,7 +118,7 @@ void WaveThumbnail::drawStereo(Graphics& g, AudioBuffer<float>& waveform)
             mAudioPoints.push_back(buffer[sample]);
         }
 
-        g.setColour(Colours::lightgreen);
+        g.setColour(Colours::yellow);
 
         float height = 0.f;
 
@@ -140,12 +143,6 @@ void WaveThumbnail::drawStereo(Graphics& g, AudioBuffer<float>& waveform)
             float minY = height - (getHeight() / 5);
             auto yValue = jmap<float>(mAudioPoints[sample] * 1.f, -1.f, 1.f, maxY, minY);
 
-            /*float phAmp = 1.f;
-            if (sample >= playHeadPosition - 20 && sample <= playHeadPosition + 20)
-            {
-                auto a = playHeadPosition - sample;
-                phAmp = 1.f + (a/20.f);
-            }*/
             auto s = jlimit(-1.f, 1.f, mAudioPoints[sample] * amp);
             auto yAmp = jmap<float>(s, -1.f, 1.f, maxY, minY);
 
@@ -155,7 +152,7 @@ void WaveThumbnail::drawStereo(Graphics& g, AudioBuffer<float>& waveform)
 
         g.strokePath(wave, PathStrokeType(0.5f));
 
-        g.setColour(juce::Colours::aquamarine.brighter());
+        g.setColour(juce::Colours::yellow.brighter());
         g.strokePath(ampWave, PathStrokeType(0.75));
     }
 
@@ -164,7 +161,7 @@ void WaveThumbnail::drawStereo(Graphics& g, AudioBuffer<float>& waveform)
 void WaveThumbnail::resized()
 {
     rompleLabel->setBoundsRelative(0.7f, 0.f, 0.3f, 0.2f);
-    dropLabel->setBoundsRelative(0.3f, 0.2f, 0.4f, 0.4f);
+    dropLabel->setBoundsRelative(0.2f, 0.15f, 0.4f, 0.4f);
 
 }
 
@@ -181,16 +178,14 @@ bool WaveThumbnail::isInterestedInFileDrag (const StringArray& files)
     return false;
 }
 
-void WaveThumbnail::filesDropped (const StringArray& files, int x, int y)
+void WaveThumbnail::filesDropped (const StringArray& filePaths, int x, int y)
 {
-    for (auto file : files)
+    for (auto filePath : filePaths)
     {
-        if (isInterestedInFileDrag (file))
+        if (isInterestedInFileDrag (filePath))
         {
-            auto myFile = std::make_unique<File>(file);
-            mFileName = myFile->getFileNameWithoutExtension();
-            processor.setRompleName(mFileName);
-            processor.loadFile (file);
+            auto myFile = std::make_unique<File>(filePath);
+            processor.loadUserFile(*myFile);
         }
     }
     

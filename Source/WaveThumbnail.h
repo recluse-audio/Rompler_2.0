@@ -35,6 +35,7 @@ public:
 
     void timerCallback() override;
 private:
+    
     PulsarUIFeel pulsarFeel;
     std::vector<float> mAudioPoints;
     bool mShouldBePainting { false };

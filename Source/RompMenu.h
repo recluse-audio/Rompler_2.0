@@ -34,10 +34,9 @@ public:
     void buttonClicked(Button* b) override;
     void prepareMenu();
 
-
+    void loadFile(int selection);
 
 private:
-    Database database;
     PopupMenu menu;
     DrawableText text;
 
@@ -47,6 +46,8 @@ private:
     std::unique_ptr<Label> rompleLabel;
 
     String fileName;
+
+    Database& database;
     RomplerAudioProcessor& audioProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RompMenu)

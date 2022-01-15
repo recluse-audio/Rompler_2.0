@@ -30,6 +30,8 @@ public:
 
     juce::Slider::SliderLayout getSliderLayout(juce::Slider&) override;
     juce::Label* createSliderTextBox(juce::Slider&) override;
+
+    void drawLabel(Graphics& g, Label& l) override;
     
     void drawButtonBackground(juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
                               bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
@@ -43,7 +45,7 @@ public:
 private:
     juce::Font getFont()
     {
-        return juce::Font ("Raleway", "Light", 15.f);
+        return juce::Font ("Consolas", "Regular", 15.f);
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PulsarUIFeel)

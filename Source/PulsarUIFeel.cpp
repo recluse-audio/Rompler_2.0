@@ -14,21 +14,30 @@
 PulsarUIFeel::PulsarUIFeel()
 {
     setColour(juce::Slider::backgroundColourId, juce::Colours::grey);
-    setColour(juce::Slider::trackColourId, Colour(87, 136, 108));
-    setColour(juce::Slider::thumbColourId, Colour(248, 199, 204));
+    setColour(juce::Slider::trackColourId, Colours::yellow.withAlpha(0.5f));
+    setColour(juce::Slider::rotarySliderFillColourId, Colours::yellow.darker());
+    setColour(juce::Slider::thumbColourId, Colours::yellow.darker());
+
+  //  setColour(juce::Slider::trackColourId, Colour(87, 136, 108));
+  //  setColour(juce::Slider::thumbColourId, Colour(248, 199, 204));
 
 
-    setColour(juce::Slider::rotarySliderFillColourId, Colour(87, 136, 108));
+   // setColour(juce::Slider::rotarySliderFillColourId, Colour(87, 136, 108));
 
     setColour(juce::TextButton::textColourOnId, juce::Colours::antiquewhite);
     setColour(juce::TextButton::textColourOffId, juce::Colours::antiquewhite);
-    setColour(juce::TextButton::buttonColourId, Colour(87, 136, 108)); 
-    setColour(juce::TextButton::buttonOnColourId, juce::Colours::pink);
+
+    setColour(juce::TextButton::buttonColourId, Colours::yellow.darker().withAlpha(0.3f));
+    setColour(juce::TextButton::buttonOnColourId, juce::Colours::yellow.darker());
+    //setColour(juce::TextButton::buttonColourId, Colour(87, 136, 108)); 
+    //setColour(juce::TextButton::buttonOnColourId, juce::Colours::pink);
 
     setColour(juce::PopupMenu::backgroundColourId, juce::Colours::black);
 
     setColour(juce::SidePanel::backgroundColour, juce::Colours::black);
     setColour(juce::SidePanel::shadowBaseColour, juce::Colours::black);
+
+    setColour(Label::textColourId, Colours::white);
 
 
 }
@@ -208,6 +217,9 @@ void PulsarUIFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int he
     p.applyTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
     g.setColour(findColour(Slider::thumbColourId));
     g.fillPath(p);
+
+    g.setColour(Colours::transparentBlack.withAlpha(0.f));
+    g.fillAll();
 }
 
 juce::Slider::SliderLayout PulsarUIFeel::getSliderLayout(juce::Slider& slider)
@@ -222,7 +234,8 @@ juce::Slider::SliderLayout PulsarUIFeel::getSliderLayout(juce::Slider& slider)
         juce::Rectangle<int> textBox(0, height * 0.7, bounds.getWidth(), 15);
         layout.textBoxBounds = textBox;
     }
-    
+
+
     if (slider.getSliderStyle() == Slider::SliderStyle::IncDecButtons)
     {
         juce::Rectangle<int> altBox;
@@ -252,10 +265,21 @@ juce::Label* PulsarUIFeel::createSliderTextBox(juce::Slider& slider)
     return l;
 }
 
+void PulsarUIFeel::drawLabel(Graphics& g, Label& label)
+{
+    g.setColour(label.findColour(Label::backgroundColourId));
+    g.fillAll();
+
+    g.setFont(getFont()); // not calling label.setFont(), but rather on the graphics context directly
+    g.setColour(label.findColour(Label::textColourId));
+    g.drawFittedText(label.getText(), 0, 0, label.getWidth(), label.getHeight(), Justification::centred, 2);  
+}
+
 /*=================================== FONT =========================================*/
 
 juce::Font PulsarUIFeel::getLabelFont(juce::Label& label)
 {
+    
    return getFont();
 
 }

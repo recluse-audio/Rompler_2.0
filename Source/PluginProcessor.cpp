@@ -21,7 +21,7 @@ RomplerAudioProcessor::RomplerAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       ), mAPVTS (*this, nullptr, "Parameters", createParameters())
+                       ), mAPVTS (*this, nullptr, "Parameters", createParameters()), database()
 #endif
 {
     mFormatManager.registerBasicFormats();
@@ -32,6 +32,7 @@ RomplerAudioProcessor::RomplerAudioProcessor()
         mSampler.addVoice (new RomplerVoice());
     }
 
+    loadFileSelection(0); // this talks to the apvts also (maybe move the apvts stuff here?)
 
 }
 
@@ -106,7 +107,7 @@ void RomplerAudioProcessor::changeProgramName (int index, const String& newName)
 void RomplerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     mSampler.setCurrentPlaybackSampleRate (sampleRate);
-    updateADSR();
+    update();
 }
 
 void RomplerAudioProcessor::releaseResources()
@@ -150,7 +151,7 @@ void RomplerAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     
     if (mShouldUpdate)
     {
-        updateADSR();
+        update();
     }
     
     MidiMessage m;
@@ -196,15 +197,128 @@ AudioProcessorEditor* RomplerAudioProcessor::createEditor()
 //==============================================================================
 void RomplerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    
+    XmlElement* xml = new XmlElement(mainTag);
+
+    std::unique_ptr<XmlElement> apvtsXml = mAPVTS.copyState().createXml();
+    apvtsXml->setTagName(treeTag);
+
+    std::unique_ptr<XmlElement> rompleXml = std::make_unique<XmlElement>(pathTag);
+    rompleXml->setAttribute(pathAttribute, romplePath);
+    rompleXml->setAttribute(flipAttribute, isFlipped);
+    rompleXml->setAttribute(reverseAttribute, isReversed);
+
+    // ..and add our new element to the parent node
+    xml->addChildElement(apvtsXml.get());
+    xml->addChildElement(rompleXml.get());
+
+    copyXmlToBinary(*xml, destData);
 }
 
 void RomplerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    auto xml = getXmlFromBinary(data, sizeInBytes);
+
+    auto apvtsXml = xml->getChildByName(treeTag);
+    juce::ValueTree copyState = juce::ValueTree::fromXml(*apvtsXml);
+    mAPVTS.replaceState(copyState);
+
+    auto rompleXml = xml->getChildByName(pathTag);
+    auto xmlPath = rompleXml->getStringAttribute(pathAttribute);
+    loadFile(xmlPath);
+
+    
+    if (rompleXml->getBoolAttribute(flipAttribute))
+        flipStereoRomple();
+    isFlipped = rompleXml->getBoolAttribute(flipAttribute); // flipStereoRomple() also flips this state, so we hard code here to overrule the flip in the function
+
+    if (rompleXml->getBoolAttribute(reverseAttribute))
+        reverseRomple();
+    isReversed = rompleXml->getBoolAttribute(reverseAttribute); // same as above
+
+}
+
+void RomplerAudioProcessor::saveRomple(StringRef rompleName, StringRef categoryName)
+{
+    String category = categoryName;
+    category.append("/", 2);
+
+    auto userCategory = File(userPath + category);
+    auto userRompleDirectory = File(userPath);
+
+    if (!userCategory.isAChildOf(userRompleDirectory)) // search user directory for existing category and then create a new directory if necessary
+    {
+        auto newCategory = File(userPath + category);
+        newCategory.create();
+        userCategory.copyDirectoryTo(newCategory);
+    }
+
+    auto file = juce::File(romplePath); // the current romple
+
+    if (rompleName == String("Romple Name") || rompleName == String("")) // if user didn't enter a name just use the original name of the romple
+    {
+        String newPath = userPath + category + file.getFileName();
+        romplePath = newPath; // store this because it gets saved in our xml
+        auto newFile = File(newPath);
+        newFile.create();
+        file.copyFileTo(newFile);
+    }
+    else
+    {
+        String newPath = userPath + category + rompleName + file.getFileExtension();
+        romplePath = newPath; // store this because it gets saved in our xml
+        auto newFile = File(newPath);
+        newFile.create();
+        file.copyFileTo(newFile);
+    }
+   
+    database.initFiles();
+}
+
+void RomplerAudioProcessor::savePreset(StringRef presetName)
+{
+    auto presetPath = userPresetPath + presetName;
+    MemoryBlock block;
+    auto file = juce::File(presetPath);
+    getStateInformation(block); // copies xml state to this 'block' a binary blob
+    file.replaceWithData(block.getData(), block.getSize());
+}
+
+void RomplerAudioProcessor::loadPreset(StringRef presetPath)
+{
+    MemoryBlock block;
+    auto file = juce::File(presetPath);
+    file.loadFileAsData(block); // fills block with files data.  See setStateInformation() in Audio Processor Base class
+    setStateInformation(block.getData(), (int)block.getSize());
+    mShouldUpdate = true;
+}
+
+void RomplerAudioProcessor::loadUserFile(File mFile)
+{
+    mSampler.clearSounds();
+
+    rompleName = mFile.getFileNameWithoutExtension();
+    romplePath = mFile.getFullPathName();
+
+    // the reader can be a local variable here since it's not needed by the other classes after this
+    std::unique_ptr<AudioFormatReader> reader{ mFormatManager.createReaderFor(mFile) };
+
+    auto sampleDur = reader->lengthInSamples / reader->sampleRate;
+
+    if (reader)
+    {
+        BigInteger range;
+        range.setRange(0, 128, true);
+        mSampler.addSound(new RomplerSound("Sample", *reader, range, 60, 0.1, 0.1, sampleDur));
+        update();
+    }
+}
+
+void RomplerAudioProcessor::loadFileSelection(int selection)
+{
+    auto path = database.getFilePathFromIndex(selection); // item id's start at 1, but passing to a vector storign file paths at [0]
+    romplePath = path;
+    loadFile(path);
 }
 
 
@@ -213,16 +327,19 @@ void RomplerAudioProcessor::loadFile (const String& path)
     mSampler.clearSounds();
     
     auto file = File (path);
-    // the reader can be a local variable here since it's not needed by the other classes after this
+
+    rompleName = file.getFileNameWithoutExtension();
+
     std::unique_ptr<AudioFormatReader> reader{ mFormatManager.createReaderFor(file) };
 
     auto sampleDur = reader->lengthInSamples / reader->sampleRate;
+
     if (reader)
     {
         BigInteger range;
         range.setRange(0, 128, true);
         mSampler.addSound(new RomplerSound("Sample", *reader, range, 60, 0.1, 0.1, sampleDur));
-        updateADSR();
+        update();
     }
     
 }
@@ -251,6 +368,8 @@ float RomplerAudioProcessor::getRMSValue(int channel)
 
 void RomplerAudioProcessor::flipStereoRomple()
 {
+    isFlipped = !isFlipped; // clever flip, just for the xml
+
     auto sound = dynamic_cast<RomplerSound*>(mSampler.getSound(mSampler.getNumSounds() - 1).get());
     if (sound)
     {
@@ -263,7 +382,7 @@ void RomplerAudioProcessor::flipStereoRomple()
             rompleBuffer->clear();
             rompleBuffer->copyFrom(0, 0, tempBuffer.getReadPointer(1), tempBuffer.getNumSamples());
             rompleBuffer->copyFrom(1, 0, tempBuffer.getReadPointer(0), tempBuffer.getNumSamples());
-            updateADSR();
+            update();
 
         }
     }
@@ -271,6 +390,8 @@ void RomplerAudioProcessor::flipStereoRomple()
 
 void RomplerAudioProcessor::reverseRomple()
 {
+    isReversed = !isReversed; // am I a fucking genius?  this flips the boolean right?
+
     auto sound = dynamic_cast<RomplerSound*>(mSampler.getSound(mSampler.getNumSounds() - 1).get());
     if (sound)
     {
@@ -279,14 +400,19 @@ void RomplerAudioProcessor::reverseRomple()
     }
 }
 
-void RomplerAudioProcessor::setRompleName(StringRef name)
-{
-    rompleName = name;
-}
-
 StringRef RomplerAudioProcessor::getRompleName()
 {
     return rompleName;
+}
+
+bool RomplerAudioProcessor::checkIfUserRomple()
+{
+    return isUserRomple;
+}
+
+Database& RomplerAudioProcessor::getDatabase()
+{
+    return database;
 }
 
 void RomplerAudioProcessor::setSmoothedRMSValue(Array<float> channelArray)
@@ -302,11 +428,13 @@ AudioProcessorValueTreeState::ParameterLayout RomplerAudioProcessor::createParam
     params.push_back (std::make_unique<AudioParameterFloat>("DECAY", "Decay", 0.0f, 2.0f, 2.0f));
     params.push_back (std::make_unique<AudioParameterFloat>("SUSTAIN", "Sustain", 0.0f, 1.0f, 1.0f));
     params.push_back (std::make_unique<AudioParameterFloat>("RELEASE", "Release", 0.0f, 2.0f, 0.1f));
+
+    params.push_back(std::make_unique<AudioParameterFloat>("File Selection", "File Selection", 0, 100, 5));
     
     return { params.begin(), params.end() };
 }
 
-void RomplerAudioProcessor::updateADSR()
+void RomplerAudioProcessor::update()
 {
     mShouldUpdate = false;
 
@@ -322,6 +450,7 @@ void RomplerAudioProcessor::updateADSR()
             sound->setEnvelopeParameters(mADSRParams);
         }
     }
+
 }
 
 void RomplerAudioProcessor::valueTreePropertyChanged (ValueTree &treeWhosePropertyHasChanged, const Identifier &property)

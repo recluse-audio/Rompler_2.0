@@ -92,10 +92,10 @@ void ADSRComponent::paint (Graphics& g)
 
 void ADSRComponent::resized()
 {
-    const auto startX = 0.4f;
-    const auto startY = 0.2f;
-    const auto dialWidth = 0.15f;
-    const auto dialHeight = 0.8f;
+    const auto startX = 0.5f;
+    const auto startY = 0.5f;
+    const auto dialWidth = 0.125f;
+    const auto dialHeight = 0.5f;
 
     mAttackSlider.setBoundsRelative (startX, startY, dialWidth, dialHeight);
     mDecaySlider.setBoundsRelative (startX + dialWidth, startY, dialWidth, dialHeight);
