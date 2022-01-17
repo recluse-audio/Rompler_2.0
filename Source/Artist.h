@@ -16,7 +16,7 @@ class Artist
 {
 public:
     Artist() {}
-    Artist(juce::String& name) : artistName(name) {} 
+    Artist(StringRef name) : artistName(name) {}
     ~Artist() {}
 
     class Category

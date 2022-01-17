@@ -61,17 +61,21 @@ void RompMenu::buttonClicked(Button* b)
     {
         prepareMenu();
         auto menuArea = Rectangle<int>(getScreenX(), getScreenY() - getParentHeight(), getParentWidth(), getParentHeight());
-        int selection = menu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
-
-        if (selection == 0)
-        {
-            menu.dismissAllActiveMenus();
-        }
-        if (selection > 0)
-        {
-            audioProcessor.loadFileSelection(selection - 1);
-            //loadFile(selection);
-        }
+        
+        menu.showMenuAsync(PopupMenu::Options().withTargetScreenArea(menuArea),
+       [this](int action)
+       {
+           if (action == 0)
+           {
+               menu.dismissAllActiveMenus();
+           }
+           else if (action >= 1)
+           {
+               int index = action - 1;
+               audioProcessor.loadFileSelection(index);
+           }
+   
+       });
     }
     repaint();
 }

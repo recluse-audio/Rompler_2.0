@@ -102,14 +102,21 @@ public:
     {
         if (b == savePresetButton.get())
         {
+            setVisible(false);
+            savePresetButton->setVisible(false);
+            selectCategoryButton->setVisible(false);
             presetToProcessor();
         }
         if (b == saveRompleButton.get())
         {
+            setVisible(false);
+            saveRompleButton->setVisible(false);
+            selectCategoryButton->setVisible(false);
             rompleToProcessor();
         }
         if (b == selectCategoryButton.get())
         {
+            selectCategoryButton->setVisible(false);
             showCategoryMenu();
         }
     }
@@ -117,48 +124,55 @@ public:
     void showPresetMenu()
     {
         auto menuArea = Rectangle<int>(getScreenX(), getScreenY() - getParentHeight(), getParentWidth(), getParentHeight());
-        int selection = menu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
-
-        switch (selection)
-        {
-            case 0:
+        
+        menu.showMenuAsync(PopupMenu::Options().withTargetScreenArea(menuArea),
+       [this](int selection)
+       {
+            switch (selection)
             {
-                menu.dismissAllActiveMenus();
-                setVisible(false);
-                
-            } break;
-            case 1:
-            { 
-                rompleNameInput->setVisible(true);
-                
-                categoryNameInput->setVisible(true);
-                
-                presetNameInput->setVisible(true);
+                case 0:
+                {
+                    menu.dismissAllActiveMenus();
+                    savePresetButton->setVisible(false);
+                    selectCategoryButton->setVisible(false);
+                    setVisible(false);
+                    
+                } break;
+                case 1:
+                {
+                    rompleNameInput->setVisible(true);
+                    
+                    categoryNameInput->setVisible(true);
+                    
+                    presetNameInput->setVisible(true);
 
-                savePresetButton->setVisible(true);
+                    savePresetButton->setVisible(true);
 
-                selectCategoryButton->setVisible(true);
-                
-            } break;
-            case 2:
+                    selectCategoryButton->setVisible(true);
+                    
+                } break;
+                case 2:
+                {
+                    rompleNameInput->setVisible(true);
+                    rompleNameInput->showEditor();
+
+                    categoryNameInput->setVisible(true);
+                    categoryNameInput->showEditor();
+
+                    saveRompleButton->setVisible(true);
+
+                    selectCategoryButton->setVisible(true);
+
+                } break;
+            }
+
+            if (selection > 2)
             {
-                rompleNameInput->setVisible(true);
-                rompleNameInput->showEditor();
+                audioProcessor.loadPreset(presetPaths[selection]);
+            }
+       });
 
-                categoryNameInput->setVisible(true);
-                categoryNameInput->showEditor();
-
-                saveRompleButton->setVisible(true);
-
-                selectCategoryButton->setVisible(true);
-
-            } break; 
-        }
-
-        if (selection > 2)
-        {
-            audioProcessor.loadPreset(presetPaths[selection]);
-        }
+        
 
         repaint();
     }
@@ -167,16 +181,21 @@ public:
     void showCategoryMenu()
     {
         auto menuArea = Rectangle<int>(getScreenX() + getWidth(), getScreenY() + (getParentHeight() * 0.45f), getParentWidth(), getParentHeight());
-        int selection = categoryMenu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
-
-        if (selection == 0)
-        {
-        }
-        if (selection > 0)
-        {
-            categoryName = categoryNames[selection - 1];
-            categoryNameInput->setText(categoryName, NotificationType::dontSendNotification);
-        }
+        
+        categoryMenu.showMenuAsync(PopupMenu::Options().withTargetScreenArea(menuArea),
+       [this](int selection)
+       {
+            if (selection == 0)
+            {
+                savePresetButton->setVisible(false);
+                selectCategoryButton->setVisible(false);                categoryMenu.dismissAllActiveMenus();
+            }
+            if (selection > 0)
+            {
+                categoryName = categoryNames[selection - 1];
+                categoryNameInput->setText(categoryName, NotificationType::dontSendNotification);
+            }
+       });
 
     }
 
@@ -198,7 +217,7 @@ public:
         
         
         auto presetMenu = new PopupMenu();
-        auto presetFiles = File("C:/ProgramData/Recluse-Audio/Rompler/Presets/Stock Presets/").findChildFiles(File::findFiles, false);
+        auto presetFiles = File("/Library/Application Support/Recluse-Audio/Rompler/Presets/Stock Presets/").findChildFiles(File::findFiles, false);
 
         for (int i = 0; i < presetFiles.size(); i++)
         {
@@ -208,7 +227,7 @@ public:
         }
 
         auto userPresetMenu = new PopupMenu();
-        auto userPresetFiles = juce::File("C:/ProgramData/Recluse-Audio/Rompler/Presets/User Presets/").findChildFiles(File::findFiles, false);
+        auto userPresetFiles = juce::File("/Library/Application Support/Recluse-Audio/Rompler/Presets/User Presets/").findChildFiles(File::findFiles, false);
         for (int j = 0; j < userPresetFiles.size(); j++)
         {
             userPresetMenu->addItem(itemIndex, userPresetFiles[j].getFileNameWithoutExtension());
@@ -232,7 +251,7 @@ public:
 
         int itemIndex = 1;
 
-        auto categoryDirectories = File("C:/ProgramData/Recluse-Audio/Rompler/Romples/User Romples/").findChildFiles(File::findDirectories, false);
+        auto categoryDirectories = File("/Library/Application Support/Recluse-Audio/Rompler/Romples/User Romples/").findChildFiles(File::findDirectories, false);
 
         for (int i = 0; i < categoryDirectories.size(); i++)
         {

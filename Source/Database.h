@@ -28,8 +28,9 @@ public:
     void initFiles()
     {
         reset();
-        auto artistFolders = juce::File("C:/ProgramData/Recluse-Audio/Rompler/Romples/").findChildFiles(File::findDirectories, false);
-
+        auto artistFolders = juce::File("/Library/Application Support/Recluse-Audio/Rompler/Romples/").findChildFiles(File::findDirectories, false);
+        DBG(artistFolders.size());
+ 
 
         for (int i = 0; i < artistFolders.size(); i++)
         {
@@ -45,9 +46,13 @@ public:
 
                 for (int k = 0; k < romples.size(); k++)
                 {
-                    filePaths.add(romples[k].getFullPathName());
-                    category->addRomple(romples[k].getFileNameWithoutExtension());
-                    fileNames.add(romples[k].getFileNameWithoutExtension());
+                    auto ext = romples[k].getFileExtension();
+                    if( ext == ".wav" || ext == ".aif" || ext == ".mp3")
+                    {
+                        filePaths.add(romples[k].getFullPathName());
+                        category->addRomple(romples[k].getFileNameWithoutExtension());
+                        fileNames.add(romples[k].getFileNameWithoutExtension());
+                    }
                 }
             }
 

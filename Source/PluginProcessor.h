@@ -116,8 +116,8 @@ private:
 
     String rompleName{ "" };
     String romplePath{ "" };
-    String userPath{ "C:/ProgramData/Recluse-Audio/Rompler/Romples/User Romples/" };
-    String userPresetPath{ "C:/ProgramData/Recluse-Audio/Rompler/Presets/User Presets/" };
+    String userPath{ "/Library/Application Support/Recluse-Audio/Rompler/Romples/User Romples/" };
+    String userPresetPath{ "/Library/Application Support/Recluse-Audio/Rompler/Presets/User Presets/" };
 
     String mainTag{ "romplerxml" };
     String treeTag{ "treexml" };
