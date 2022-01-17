@@ -8,9 +8,9 @@
   <MAINGROUP id="motkF3" name="Rompler">
     <GROUP id="{4E7C4DC6-691C-F961-12DF-CE2BDBD4768D}" name="Source">
       <GROUP id="{50825C40-59AE-1080-0143-243BBA595074}" name="Resources">
-        <FILE id="NTuIeS" name="KingsRest_LOGO.svg" compile="0" resource="1"
-              file="../../Users/ryand/Desktop/KingsRest_LOGO.svg"/>
-        <FILE id="A4LuAM" name="LOGO_SVG.svg" compile="0" resource="1" file="../../ProgramData/Recluse-Audio/LOGO_SVG.svg"/>
+        <FILE id="CbFZdK" name="KingsRest_LOGO.svg" compile="0" resource="1"
+              file="/Library/Application Support/Recluse-Audio/Rompler/KingsRest_LOGO.svg"/>
+        <FILE id="W8vXKJ" name="LOGO_SVG.svg" compile="0" resource="1" file="/Library/Application Support/Recluse-Audio/Rompler/LOGO_SVG.svg"/>
       </GROUP>
       <GROUP id="{A342E480-93DA-2A0C-2B32-508D08EE327D}" name="LookNFeel">
         <FILE id="J4WtL7" name="PulsarUIFeel.cpp" compile="1" resource="0"
@@ -75,6 +75,26 @@
         <MODULEPATH id="juce_gui_extra" path="../../JUCE_Home/JUCE/modules"/>
       </MODULEPATHS>
     </VS2019>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
