@@ -131,16 +131,15 @@ public:
             int selection = menu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
             runPresetMenu(selection);
         }
-        else
+        else // mac version
         {
-			menu.showMenuAsync(PopupMenu::Options().withTargetScreenArea(menuArea),
+            menu.showMenuAsync(PopupMenu::Options().withTargetScreenArea(menuArea),
                 [this](int selection)
                 {
                     runPresetMenu(selection);
-                }
+                });
         }
 
-       
         repaint();
     }
 
