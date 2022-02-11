@@ -30,7 +30,7 @@ public:
     void paint (juce::Graphics& g) override
     {
         auto alpha = audioProcessor.getRMSValue(0) + audioProcessor.getRMSValue(1);
-        logo->setTransformToFit(getLocalBounds().toFloat(), RectanglePlacement::stretchToFit);
+        logo->setTransformToFit(getLocalBounds().toFloat(), RectanglePlacement::centred);
         logo->drawAt(g, 0, 0, 0.1f + alpha);
     }
 
@@ -52,7 +52,7 @@ public:
                xmlData = BinaryData::LOGO_SVG_svg;
                break;
         }
-        std::unique_ptr<XmlElement> svg = XmlDocument::parse(BinaryData::KingsRest_LOGO_svg);
+        std::unique_ptr<XmlElement> svg = XmlDocument::parse(BinaryData::LOGO_SVG_svg);
         jassert(svg != nullptr);
 
         if (svg != nullptr)

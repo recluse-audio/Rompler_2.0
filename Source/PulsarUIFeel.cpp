@@ -270,7 +270,7 @@ void PulsarUIFeel::drawLabel(Graphics& g, Label& label)
     g.setColour(label.findColour(Label::backgroundColourId));
     g.fillAll();
 
-    g.setFont(getFont()); // not calling label.setFont(), but rather on the graphics context directly
+    g.setFont(getFont().withHeight(label.getHeight() * 0.9f)); // not calling label.setFont(), but rather on the graphics context directly
     g.setColour(label.findColour(Label::textColourId));
     g.drawFittedText(label.getText(), 0, 0, label.getWidth(), label.getHeight(), Justification::centred, 2);  
 }

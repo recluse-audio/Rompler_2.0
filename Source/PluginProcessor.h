@@ -85,6 +85,9 @@ public:
     bool checkIfUserRomple();
 
     Database& getDatabase();
+
+    bool checkIfWindows();
+    void initUserPath();
 private:
     Database database;
 
@@ -116,8 +119,9 @@ private:
 
     String rompleName{ "" };
     String romplePath{ "" };
-    String userPath{ "C:/ProgramData/Recluse-Audio/Rompler/Romples/User Romples/" };
-    String userPresetPath{ "C:/ProgramData/Recluse-Audio/Rompler/Presets/User Presets/" };
+    String userPath;
+    String userPresetPath;
+    String rootPath; 
 
     String mainTag{ "romplerxml" };
     String treeTag{ "treexml" };
@@ -125,6 +129,8 @@ private:
     String pathAttribute{ "pathattribute" };
     String flipAttribute{ "isflipped" };
     String reverseAttribute{ "isreversed" };
+
+    bool isWindows = false;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RomplerAudioProcessor)
 };

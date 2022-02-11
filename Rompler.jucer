@@ -8,8 +8,6 @@
   <MAINGROUP id="motkF3" name="Rompler">
     <GROUP id="{4E7C4DC6-691C-F961-12DF-CE2BDBD4768D}" name="Source">
       <GROUP id="{50825C40-59AE-1080-0143-243BBA595074}" name="Resources">
-        <FILE id="NTuIeS" name="KingsRest_LOGO.svg" compile="0" resource="1"
-              file="../../Users/ryand/Desktop/KingsRest_LOGO.svg"/>
         <FILE id="A4LuAM" name="LOGO_SVG.svg" compile="0" resource="1" file="../../ProgramData/Recluse-Audio/LOGO_SVG.svg"/>
       </GROUP>
       <GROUP id="{A342E480-93DA-2A0C-2B32-508D08EE327D}" name="LookNFeel">

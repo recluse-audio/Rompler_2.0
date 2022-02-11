@@ -35,16 +35,11 @@ void RompMenu::paint (juce::Graphics& g)
 {
     g.setColour(juce::Colours::transparentBlack.withAlpha(0.f));
     g.fillAll();
-
-    //rompleLabel->setText(fileName, NotificationType::sendNotificationAsync);
-    
 }
 
 void RompMenu::resized()
 {
     menuButton->setBoundsRelative(0.8f, 0.05f, 0.2f, 0.7f);
-    //rompleLabel->setBoundsRelative(0.05f, 0.05f, 0.3f, 0.7f);
-
 }
 
 
@@ -82,8 +77,6 @@ void RompMenu::buttonClicked(Button* b)
 void RompMenu::loadFile(int selection)
 {
 
-
-    
 }
 
 void RompMenu::prepareMenu()
@@ -118,8 +111,6 @@ void RompMenu::prepareMenu()
         }
 
     }
-
-    
 }
 
 

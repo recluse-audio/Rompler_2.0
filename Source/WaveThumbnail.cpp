@@ -75,7 +75,7 @@ void WaveThumbnail::paint (Graphics& g)
 
 void WaveThumbnail::drawMono(Graphics& g, AudioBuffer<float>& waveform)
 {
-    Path p;
+    Path wave, ampWave;
     mAudioPoints.clear();
 
     auto ratio = waveform.getNumSamples() / getWidth();
@@ -87,19 +87,32 @@ void WaveThumbnail::drawMono(Graphics& g, AudioBuffer<float>& waveform)
         mAudioPoints.push_back(buffer[sample]);
     }
 
-    g.setColour(Colours::yellow);
-    p.startNewSubPath(0, getHeight() / 2);
+    float middle = getHeight() / 2.f;
+
+    wave.startNewSubPath(0, middle);
+    ampWave.startNewSubPath(0, middle);
+
+    float amp = processor.getRMSValue(0) * 10.f;
 
     //scale on y axis
     for (int sample = 0; sample < mAudioPoints.size(); ++sample)
     {
-        auto point = jmap<float>(mAudioPoints[sample], -1.0f, 1.0f, getHeight(), 0);
-        p.lineTo(sample, point);
+        float maxY = middle + (getHeight() / 5);
+        float minY = middle - (getHeight() / 5);
+        auto yValue = jmap<float>(mAudioPoints[sample] * 1.f, -1.f, 1.f, maxY, minY);
+
+        auto s = jlimit(-1.f, 1.f, mAudioPoints[sample] * amp);
+        auto yAmp = jmap<float>(s, -1.f, 1.f, maxY, minY);
+
+        wave.lineTo(sample, yValue);
+        ampWave.lineTo(sample, yAmp);
     }
 
-    g.strokePath(p, PathStrokeType(0.5f));
+    g.setColour(Colours::aquamarine.withAlpha(0.5f));
+    g.strokePath(wave, PathStrokeType(0.5f));
 
-   
+    g.setColour(juce::Colours::aquamarine.brighter());
+    g.strokePath(ampWave, PathStrokeType(0.75));
 }
 
 void WaveThumbnail::drawStereo(Graphics& g, AudioBuffer<float>& waveform)
@@ -117,8 +130,6 @@ void WaveThumbnail::drawStereo(Graphics& g, AudioBuffer<float>& waveform)
         {
             mAudioPoints.push_back(buffer[sample]);
         }
-
-        g.setColour(Colours::yellow);
 
         float height = 0.f;
 
@@ -150,19 +161,18 @@ void WaveThumbnail::drawStereo(Graphics& g, AudioBuffer<float>& waveform)
             ampWave.lineTo(sample, yAmp);
         }
 
+        g.setColour(Colours::aquamarine.withAlpha(0.5f));
         g.strokePath(wave, PathStrokeType(0.5f));
 
-        g.setColour(juce::Colours::yellow.brighter());
+        g.setColour(juce::Colours::aquamarine.brighter());
         g.strokePath(ampWave, PathStrokeType(0.75));
     }
-
 }
 
 void WaveThumbnail::resized()
 {
     rompleLabel->setBoundsRelative(0.7f, 0.f, 0.3f, 0.2f);
     dropLabel->setBoundsRelative(0.2f, 0.15f, 0.4f, 0.4f);
-
 }
 
 bool WaveThumbnail::isInterestedInFileDrag (const StringArray& files)

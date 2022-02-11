@@ -25,8 +25,8 @@ RomplerAudioProcessorEditor::RomplerAudioProcessorEditor (RomplerAudioProcessor&
     addAndMakeVisible(logoComponent.get());
     logoComponent->setAlwaysOnTop(false);
 
-    kingsLabel = std::make_unique<Label>("King's Rest Custom Rompler");
-    kingsLabel->setText("King's Rest Custom Rompler", NotificationType::dontSendNotification);
+    kingsLabel = std::make_unique<Label>("Rompler");
+    kingsLabel->setText("Rompler", NotificationType::dontSendNotification);
     
     addAndMakeVisible(kingsLabel.get());
     kingsLabel->setFont(Font("Consolas", "Regular", 10.f));
@@ -40,7 +40,6 @@ RomplerAudioProcessorEditor::RomplerAudioProcessorEditor (RomplerAudioProcessor&
 
     rompMenu = std::make_unique<RompMenu>(p);
     addAndMakeVisible(rompMenu.get());
-
 
     stereoFlipButton = std::make_unique<TextButton>("Flip");
     addAndMakeVisible(stereoFlipButton.get());
@@ -58,10 +57,12 @@ RomplerAudioProcessorEditor::RomplerAudioProcessorEditor (RomplerAudioProcessor&
     addChildComponent(presetMenu.get());
 
     frame = Rectangle<float>(getWidth() * 0.025f, getHeight() * 0.1f, getWidth() * 0.95f, getHeight() * 0.875f);
+    bigFrame = Rectangle<float>(getWidth() * 0.025f, getHeight() * 0.1f, getWidth() * 0.95f, getHeight() * 0.875f);
 
     startTimerHz (60);
     
     setSize (600, 400);
+    setResizable(true, true);
 }
 
 RomplerAudioProcessorEditor::~RomplerAudioProcessorEditor()
@@ -77,13 +78,15 @@ void RomplerAudioProcessorEditor::paint (Graphics& g)
 
     g.setColour(color.brighter());
     g.drawRoundedRectangle(frame, 2.f, 3.f);
+    g.drawRoundedRectangle(bigFrame, 1.f, 4.f);
 }
 
 void RomplerAudioProcessorEditor::resized()
 {
-    frame = Rectangle<float>(getWidth() * 0.025f, getHeight() * 0.1f, getWidth() * 0.95f, getHeight() * 0.875f);
+    frame = Rectangle<float>(getWidth() * 0.03f, getHeight() * 0.125f, getWidth() * 0.94f, getHeight() * 0.85f);
+    bigFrame = Rectangle<float>(getWidth()*0.005f, getHeight()*0.005f, getWidth()*0.99f, getHeight()*0.99f);
 
-    rompMenu->setBoundsRelative(0.025f, 0.f, 0.95f, 0.1f);
+    rompMenu->setBoundsRelative(0.03f, 0.03f, 0.95f, 0.1f);
     logoComponent->setBoundsRelative(0.3f, 0.2f, 0.4f, 0.6f);
     rompleLabel->setBoundsRelative(0.78f, 0.125f, 0.175f, 0.075f);
 
@@ -97,10 +100,10 @@ void RomplerAudioProcessorEditor::resized()
     stereoFlipButton->setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
     reverseButton->setBounds(buttonX + buttonWidth * 1.1f, buttonY, buttonWidth, buttonHeight);
 
-    presetMenu->setBoundsRelative(0.025f, 0.1f, 0.4f, 0.5f);
-    saveButton->setBoundsRelative(0.025f, 0.01f, 0.2f, 0.07f);
+    presetMenu->setBoundsRelative(0.03f, 0.1f, 0.4f, 0.5f);
+    saveButton->setBoundsRelative(0.03f, 0.03f, 0.2f, 0.07f);
 
-    kingsLabel->setBoundsRelative(0.35f, 0.01f, 0.3f, 0.1f);
+    kingsLabel->setBoundsRelative(0.3f, 0.01f, 0.4f, 0.075f);
 }
 
 void RomplerAudioProcessorEditor::timerCallback()

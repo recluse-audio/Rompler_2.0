@@ -25,14 +25,22 @@ class PresetMenu : public juce::Component, Button::Listener
 public:
     PresetMenu(RomplerAudioProcessor& p) : audioProcessor(p)
     {
+        if (audioProcessor.checkIfWindows())
+        {
+            rootPath = { "C:/ProgramData" };
+        }
+        else
+        {
+            rootPath = { "/Library/Application Support" };
+        }
         setLookAndFeel(&pulsarFeel);
         prepareMenu();
         prepareCategoryMenu();
 
         presetNameInput = std::make_unique<Label>();
         presetNameInput->setText("Preset Name", NotificationType::dontSendNotification);
-        presetNameInput->setColour(Label::backgroundColourId, Colours::aquamarine.withAlpha(0.3f));
-        presetNameInput->setColour(Label::backgroundWhenEditingColourId, Colours::mediumaquamarine.darker(0.9f));
+        presetNameInput->setColour(Label::backgroundColourId, Colours::darkorange.darker(0.9f));
+        presetNameInput->setColour(Label::backgroundWhenEditingColourId, Colours::darkorange.darker(0.9f));
         presetNameInput->setLookAndFeel(&pulsarFeel);// (Font("Consolas", "Regular", 10.f));
         addChildComponent(presetNameInput.get());
         presetNameInput->setEditable(true);
@@ -40,28 +48,28 @@ public:
 
         rompleNameInput = std::make_unique<Label>();
         rompleNameInput->setText("Romple Name", NotificationType::dontSendNotification);
-        rompleNameInput->setColour(Label::backgroundColourId, Colours::aquamarine.withAlpha(0.3f));
-        rompleNameInput->setColour(Label::backgroundWhenEditingColourId, Colours::aquamarine.darker(0.9f));
+        rompleNameInput->setColour(Label::backgroundColourId, Colours::darkorange.darker(0.9f));
+        rompleNameInput->setColour(Label::backgroundWhenEditingColourId, Colours::darkorange.darker(0.9f));
         addChildComponent(rompleNameInput.get());
         rompleNameInput->setEditable(true);
         rompleNameInput->onTextChange = [this] { createNewRomple(rompleNameInput->getText()); };
 
         categoryNameInput = std::make_unique<Label>();
         categoryNameInput->setText("Romple Category", NotificationType::dontSendNotification);
-        categoryNameInput->setColour(Label::backgroundColourId, Colours::aquamarine.withAlpha(0.3f));
+        categoryNameInput->setColour(Label::backgroundColourId, Colours::darkorange.darker(0.9f));
         categoryNameInput->setColour(Label::backgroundWhenEditingColourId, Colours::aquamarine.darker(0.9f));
-        categoryNameInput->setColour(Label::outlineColourId, Colours::aquamarine);
+        categoryNameInput->setColour(Label::outlineColourId, Colours::darkorange.darker(0.9f));
         addChildComponent(categoryNameInput.get());
         categoryNameInput->setEditable(true);
         categoryNameInput->onTextChange = [this] { createNewCategory(categoryNameInput->getText()); };
 
         saveRompleButton = std::make_unique<TextButton>("Save Romple");
-        saveRompleButton->setColour(TextButton::ColourIds::buttonColourId, Colours::aquamarine.withAlpha(0.5f));
+        saveRompleButton->setColour(TextButton::ColourIds::buttonColourId, Colours::darkorange.darker(0.9f));
         saveRompleButton->addListener(this);
         addChildComponent(saveRompleButton.get());
 
         savePresetButton = std::make_unique<TextButton>("Save Preset");
-        savePresetButton->setColour(TextButton::ColourIds::buttonColourId, Colours::aquamarine.withAlpha(0.5f));
+        savePresetButton->setColour(TextButton::ColourIds::buttonColourId, Colours::darkorange.darker(0.9f));
         savePresetButton->addListener(this);
         addChildComponent(savePresetButton.get());
 
@@ -80,7 +88,7 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        g.setColour(juce::Colours::transparentBlack.withAlpha(0.7f));
+        g.setColour(juce::Colours::transparentBlack.withAlpha(0.f));
         //g.setColour(Colours::pink);
         g.fillAll();
     }
@@ -116,59 +124,81 @@ public:
 
     void showPresetMenu()
     {
-        auto menuArea = Rectangle<int>(getScreenX(), getScreenY() - getParentHeight(), getParentWidth(), getParentHeight());
-        int selection = menu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
+		auto menuArea = Rectangle<int>(getScreenX(), getScreenY() - getParentHeight(), getParentWidth(), getParentHeight());
 
-        switch (selection)
+		if (audioProcessor.checkIfWindows())
+		{
+            int selection = menu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
+            runPresetMenu(selection);
+        }
+        else
         {
-            case 0:
-            {
-                menu.dismissAllActiveMenus();
-                setVisible(false);
-                
-            } break;
-            case 1:
-            { 
-                rompleNameInput->setVisible(true);
-                
-                categoryNameInput->setVisible(true);
-                
-                presetNameInput->setVisible(true);
-
-                savePresetButton->setVisible(true);
-
-                selectCategoryButton->setVisible(true);
-                
-            } break;
-            case 2:
-            {
-                rompleNameInput->setVisible(true);
-                rompleNameInput->showEditor();
-
-                categoryNameInput->setVisible(true);
-                categoryNameInput->showEditor();
-
-                saveRompleButton->setVisible(true);
-
-                selectCategoryButton->setVisible(true);
-
-            } break; 
+			menu.showMenuAsync(PopupMenu::Options().withTargetScreenArea(menuArea),
+                [this](int selection)
+                {
+                    runPresetMenu(selection);
+                }
         }
 
-        if (selection > 2)
-        {
-            audioProcessor.loadPreset(presetPaths[selection]);
-        }
-
+       
         repaint();
     }
 
+    // runs the selected menu item, separated to enable the different algorithms JUCE uses on different OS
+    void runPresetMenu(int selection)
+    {
+		switch (selection)
+		{
+		case 0:
+		{
+			menu.dismissAllActiveMenus();
+			setVisible(false);
+		} break;
+		case 1:
+		{
+			// remove user option to save existing romple
+			if (audioProcessor.checkIfUserRomple())
+			{
+				rompleNameInput->setVisible(true);
+				rompleNameInput->setText(audioProcessor.getRompleName(), NotificationType::dontSendNotification);
+				categoryNameInput->setVisible(true);
+				selectCategoryButton->setVisible(true);
+			}
+
+			presetNameInput->setVisible(true);
+			savePresetButton->setVisible(true);
+
+		} break;
+		case 2:
+		{
+			// remove user option to save existing romple
+			if (audioProcessor.checkIfUserRomple())
+			{
+				rompleNameInput->setVisible(true);
+				rompleNameInput->setText(audioProcessor.getRompleName(), NotificationType::dontSendNotification);
+				categoryNameInput->setVisible(true);
+				selectCategoryButton->setVisible(true);
+				saveRompleButton->setVisible(true);
+			}
+		} break;
+		}
+
+		if (selection > 2)
+		{
+			audioProcessor.loadPreset(presetPaths[selection]);
+		}
+    }
     // selection of folders to save a preset to
     void showCategoryMenu()
     {
         auto menuArea = Rectangle<int>(getScreenX() + getWidth(), getScreenY() + (getParentHeight() * 0.45f), getParentWidth(), getParentHeight());
+        
         int selection = categoryMenu.showMenu(PopupMenu::Options().withTargetScreenArea(menuArea));
 
+        if (audioProcessor.checkIfWindows())
+        {
+
+        }
         if (selection == 0)
         {
         }
@@ -198,7 +228,9 @@ public:
         
         
         auto presetMenu = new PopupMenu();
-        auto presetFiles = File("C:/ProgramData/Recluse-Audio/Rompler/Presets/Stock Presets/").findChildFiles(File::findFiles, false);
+
+        String presetPath = rootPath + String("/Recluse-Audio/Rompler/Presets/Stock Presets/");
+        auto presetFiles = File(presetPath).findChildFiles(File::findFiles, false);
 
         for (int i = 0; i < presetFiles.size(); i++)
         {
@@ -208,7 +240,8 @@ public:
         }
 
         auto userPresetMenu = new PopupMenu();
-        auto userPresetFiles = juce::File("C:/ProgramData/Recluse-Audio/Rompler/Presets/User Presets/").findChildFiles(File::findFiles, false);
+        String userPresetPath = rootPath + String("/Recluse-Audio/Rompler/Presets/User Presets/");
+        auto userPresetFiles = juce::File(userPresetPath).findChildFiles(File::findFiles, false);
         for (int j = 0; j < userPresetFiles.size(); j++)
         {
             userPresetMenu->addItem(itemIndex, userPresetFiles[j].getFileNameWithoutExtension());
@@ -232,7 +265,8 @@ public:
 
         int itemIndex = 1;
 
-        auto categoryDirectories = File("C:/ProgramData/Recluse-Audio/Rompler/Romples/User Romples/").findChildFiles(File::findDirectories, false);
+        String categoryPath = rootPath + String("/Recluse-Audio/Rompler/Romples/User Romples/");
+        auto categoryDirectories = File(categoryPath).findChildFiles(File::findDirectories, false);
 
         for (int i = 0; i < categoryDirectories.size(); i++)
         {
@@ -242,6 +276,7 @@ public:
         }
 
     }
+
     void createNewRomple(StringRef rompName)
     {
         rompleName = rompName;
@@ -252,7 +287,6 @@ public:
     {
         categoryName = catName;
         categoryNameInput->setText("Category Name: " + categoryName, NotificationType::dontSendNotification);
-
     }
 
     // called by the 'textInput' label as part of its text changed lambda
@@ -273,7 +307,9 @@ public:
     // save romple / category to file structure and preset to xml then files
     void presetToProcessor()
     {
-        audioProcessor.saveRomple(rompleName, categoryName);
+        if(audioProcessor.checkIfUserRomple())
+            audioProcessor.saveRomple(rompleName, categoryName);
+
         audioProcessor.savePreset(presetName);
         resetTextInput();
     }
@@ -293,8 +329,14 @@ public:
 
         prepareMenu();
         prepareCategoryMenu();
+        setVisible(false);
+
     }
 
+    bool rompleExists(StringRef rompName)
+    {
+        
+    }
 private:
     bool hasRompleName = false;
     String rompleName = { "" };
@@ -303,6 +345,7 @@ private:
     String presetName = { "" };
     StringArray presetPaths = {"", "", ""}; // nasty way of offsetting because menu starts referencing these at index 3
 
+    String rootPath; // set according to OS
 
     PopupMenu menu;
     PopupMenu categoryMenu;

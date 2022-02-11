@@ -11,6 +11,7 @@
 #pragma once
 #include "Artist.h"
 #include <JuceHeader.h>
+
 using namespace juce;
 // This class is for intializing each artist and their romples.  This holds the array of file paths
 // I wish I could get this to store file paths by artist, but returnign the selected index id from 
@@ -19,16 +20,16 @@ using namespace juce;
 class Database
 {
 public:
-    Database() 
+    Database()
     { 
-        initFiles(); 
+        
     }
     ~Database() {}
 
     void initFiles()
     {
         reset();
-        auto artistFolders = juce::File("C:/ProgramData/Recluse-Audio/Rompler/Romples/").findChildFiles(File::findDirectories, false);
+        auto artistFolders = juce::File(rootPath).findChildFiles(File::findDirectories, false);
 
 
         for (int i = 0; i < artistFolders.size(); i++)
@@ -55,13 +56,13 @@ public:
         }
     }
 
-    juce::String& getFilePathFromIndex(int index) 
+    StringRef getFilePathFromIndex(int index) 
     { 
 
         return filePaths.getReference(index); 
     }
 
-    juce::String& getFileNameFromIndex(int index)
+    StringRef getFileNameFromIndex(int index)
     {
         return fileNames.getReference(index);
     }
@@ -73,6 +74,18 @@ public:
         fileNames.clear();
         categoryNames.clear();
     }
+
+    void setRootPath(bool isWindows)
+    {
+		if (isWindows)
+		{
+			rootPath = { "C:/ProgramData/Recluse-Audio/Rompler/Romples/" };
+		}
+		else
+		{
+			rootPath = { " /Library/Application Support/Recluse-Audio/Rompler/Romples/" };
+		}
+    }
     
 private:
     juce::OwnedArray<Artist> artists;
@@ -80,6 +93,8 @@ private:
     juce::StringArray fileNames;
     juce::StringArray categoryNames;
 
+    String rootPath; // set based on Mac or Windows OS
 
     friend class RompMenu;
+
 };

@@ -27,6 +27,23 @@ RomplerAudioProcessor::RomplerAudioProcessor()
     mFormatManager.registerBasicFormats();
     mAPVTS.state.addListener (this);
     
+#if JUCE_WINDOWS
+    {
+        isWindows = true;
+        rootPath = { "C:/ProgramData/" };
+    }
+#else
+	{
+		isWindows = false;
+		rootPath = { "/Library/Application Support/" };
+    }
+#endif
+
+    initUserPath();
+
+    database.setRootPath(isWindows);
+    database.initFiles();
+
     for (int i = 0; i < mNumVoices; i++)
     {
         mSampler.addVoice (new RomplerVoice());
@@ -197,7 +214,6 @@ AudioProcessorEditor* RomplerAudioProcessor::createEditor()
 //==============================================================================
 void RomplerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    
     XmlElement* xml = new XmlElement(mainTag);
 
     std::unique_ptr<XmlElement> apvtsXml = mAPVTS.copyState().createXml();
@@ -224,8 +240,10 @@ void RomplerAudioProcessor::setStateInformation (const void* data, int sizeInByt
     mAPVTS.replaceState(copyState);
 
     auto rompleXml = xml->getChildByName(pathTag);
-    auto xmlPath = rompleXml->getStringAttribute(pathAttribute);
-    loadFile(xmlPath);
+    auto xmlPath = rompleXml->getStringAttribute(pathAttribute); // path to saved romple that needs to changed based on OS
+    auto shortPath = xmlPath.fromFirstOccurrenceOf({ "Recluse" }, true, false);
+    String loadPath = rootPath + shortPath;
+    loadFile(loadPath);
 
     
     if (rompleXml->getBoolAttribute(flipAttribute))
@@ -311,6 +329,8 @@ void RomplerAudioProcessor::loadUserFile(File mFile)
         range.setRange(0, 128, true);
         mSampler.addSound(new RomplerSound("Sample", *reader, range, 60, 0.1, 0.1, sampleDur));
         update();
+
+        isUserRomple = true;
     }
 }
 
@@ -340,6 +360,8 @@ void RomplerAudioProcessor::loadFile (const String& path)
         range.setRange(0, 128, true);
         mSampler.addSound(new RomplerSound("Sample", *reader, range, 60, 0.1, 0.1, sampleDur));
         update();
+
+        isUserRomple = false;
     }
     
 }
@@ -413,6 +435,27 @@ bool RomplerAudioProcessor::checkIfUserRomple()
 Database& RomplerAudioProcessor::getDatabase()
 {
     return database;
+}
+
+bool RomplerAudioProcessor::checkIfWindows()
+{
+    return isWindows;
+}
+
+// Sets user path according to OS (windows/mac)
+void RomplerAudioProcessor::initUserPath()
+{
+    if (isWindows)
+    {
+		userPath = { "C:/ProgramData/Recluse-Audio/Rompler/Romples/User Romples/" };
+		userPresetPath = { "C:/ProgramData/Recluse-Audio/Rompler/Presets/User Presets/" };
+    }
+    else
+    {
+		userPath = { "/Library/Application Support/Recluse-Audio/Rompler/Romples/User Romples/" };
+		userPresetPath = { "/Library/Application Support/Recluse-Audio/Rompler/Presets/User Presets/" };
+    }
+
 }
 
 void RomplerAudioProcessor::setSmoothedRMSValue(Array<float> channelArray)

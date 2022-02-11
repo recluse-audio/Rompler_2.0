@@ -44,6 +44,7 @@ private:
     PulsarUIFeel pulsarFeel;
 
     Rectangle<float> frame;
+    Rectangle<float> bigFrame;
     std::unique_ptr<WaveThumbnail> mWaveThumbnail;
     std::unique_ptr<ADSRComponent> mADSR;
     std::unique_ptr<RompMenu> rompMenu;
@@ -59,6 +60,8 @@ private:
     std::unique_ptr<Label>      rompleLabel;
 
     std::unique_ptr<Label>      kingsLabel;
+
+
 
     RomplerAudioProcessor& processor;
 
