@@ -91,6 +91,8 @@ target_link_libraries(Rompler_2.0
         juce::juce_recommended_warning_flags
 )
 
+set(ROMPLER_FACTORY_SAMPLES_PATH "${CMAKE_SOURCE_DIR}/ASSETS/ROMPLES")
+
 target_compile_definitions(Rompler_2.0
     PUBLIC
         JUCE_WEB_BROWSER=0
@@ -98,6 +100,8 @@ target_compile_definitions(Rompler_2.0
         JUCE_VST3_CAN_REPLACE_VST2=0
         JUCE_MODAL_LOOPS_PERMITTED=1
         JUCE_REPORT_APP_USAGE=0
+    PRIVATE
+        "ROMPLER_FACTORY_SAMPLES_PATH=\"${ROMPLER_FACTORY_SAMPLES_PATH}\""
 )
 
 if(MSVC)

@@ -27,29 +27,42 @@ public:
 
     void initFiles()
     {
-        auto artistFolders = juce::File("C:/ProgramData/Recluse-Audio/Rompler/").findChildFiles(File::findDirectories, false);
+        // Factory presets bundled with the build
+        juce::File factoryPath (juce::String (ROMPLER_FACTORY_SAMPLES_PATH));
+        if (factoryPath.isDirectory())
+            initFilesFromRoot (factoryPath);
+
+        // User samples installed to the system data directory
+        juce::File userPath ("C:/ProgramData/Recluse-Audio/Rompler/");
+        if (userPath.isDirectory())
+            initFilesFromRoot (userPath);
+    }
+
+    void initFilesFromRoot (const juce::File& root)
+    {
+        auto artistFolders = root.findChildFiles (File::findDirectories, false);
 
         for (int i = 0; i < artistFolders.size(); i++)
         {
-            auto artist = new Artist(artistFolders[i].getFileName());
-            auto categories = artistFolders[i].findChildFiles(File::findDirectories, false);
+            auto artist = new Artist (artistFolders[i].getFileName());
+            auto categories = artistFolders[i].findChildFiles (File::findDirectories, false);
 
             for (int j = 0; j < categories.size(); j++)
             {
-                auto romples = categories[j].findChildFiles(File::findFiles, true);
-                artist->addCategory(categories[j].getFileNameWithoutExtension());
+                auto romples = categories[j].findChildFiles (File::findFiles, true);
+                artist->addCategory (categories[j].getFileNameWithoutExtension());
 
                 auto category = artist->getCategories()[j];
 
                 for (int k = 0; k < romples.size(); k++)
                 {
-                    filePaths.add(romples[k].getFullPathName());
-                    category->addRomple(romples[k].getFileNameWithoutExtension());
-                    fileNames.add(romples[k].getFileNameWithoutExtension());
+                    filePaths.add (romples[k].getFullPathName());
+                    category->addRomple (romples[k].getFileNameWithoutExtension());
+                    fileNames.add (romples[k].getFileNameWithoutExtension());
                 }
             }
 
-            artists.add(artist);
+            artists.add (artist);
         }
     }
 
