@@ -46,6 +46,10 @@ DerivedData/
 Builds/
 JuceLibraryCode/
 
+# Python
+__pycache__/
+*.pyc
+
 # Operating system
 .DS_Store
 Thumbs.db
