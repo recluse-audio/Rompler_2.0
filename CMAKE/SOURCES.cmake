@@ -1,0 +1,20 @@
+set(SOURCES
+    SOURCE/Components/ADSRComponent.cpp
+    SOURCE/Components/ADSRComponent.h
+    SOURCE/Components/DrawableComponent.h
+    SOURCE/Components/PluginEditor.cpp
+    SOURCE/Components/PluginEditor.h
+    SOURCE/Components/RompMenu.cpp
+    SOURCE/Components/RompMenu.h
+    SOURCE/Components/WaveThumbnail.cpp
+    SOURCE/Components/WaveThumbnail.h
+    SOURCE/LookNFeel/PulsarUIFeel.cpp
+    SOURCE/LookNFeel/PulsarUIFeel.h
+    SOURCE/Processor/PluginProcessor.cpp
+    SOURCE/Processor/PluginProcessor.h
+    SOURCE/Processor/RomplerSound.h
+    SOURCE/Processor/RomplerSynth.h
+    SOURCE/ROMPLE_DATA/Artist.h
+    SOURCE/ROMPLE_DATA/Database.h
+    SOURCE/Util/Version.h
+)
