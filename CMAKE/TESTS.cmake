@@ -1,3 +1,4 @@
 set(TEST_SOURCES
-    # No files found
+    TESTS/test_ParameterValues.cpp
+    TESTS/test_Rompler.cpp
 )
