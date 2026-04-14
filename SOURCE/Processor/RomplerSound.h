@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include "JuceHeader.h"
+#include <JuceHeader.h>
 
 class RomplerSound : public SynthesiserSound
 {
@@ -145,9 +145,7 @@ public:
 
                 if (downSampleIncrement >= downSampleRatio)
                 {
-                    auto pos = (int)sourceSamplePosition;
-                    auto alpha = (float)(sourceSamplePosition - pos);
-                    auto invAlpha = 1.0f - alpha;
+                    downSampleIncrement = 0;
                 }
                 
                 auto pos = (int)sourceSamplePosition;

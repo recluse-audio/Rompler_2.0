@@ -11,17 +11,17 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "PulsarUIFeel.h"
-#include "PluginProcessor.h"
-#include "Database.h"
-#include "Artist.h"
+#include "../LookNFeel/PulsarUIFeel.h"
+#include "../Processor/PluginProcessor.h"
+#include "../ROMPLE_DATA/Database.h"
+#include "../ROMPLE_DATA/Artist.h"
 
 
 
 //==============================================================================
 /*
 */
-class RompMenu  : public juce::Component, juce::MouseListener, juce::Button::Listener
+class RompMenu  : public juce::Component, public juce::Button::Listener
 {
 public:
     RompMenu(RomplerAudioProcessor& p);

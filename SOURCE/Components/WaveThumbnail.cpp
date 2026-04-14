@@ -19,12 +19,12 @@ WaveThumbnail::WaveThumbnail (RomplerAudioProcessor& p) : processor (p)
 
     rompleLabel = std::make_unique<Label>("");
     rompleLabel->setAlwaysOnTop(true);
-    rompleLabel->setFont(40.f);
+    rompleLabel->setFont(juce::Font (juce::FontOptions{}.withHeight (40.f)));
     addAndMakeVisible(rompleLabel.get());
 
     dropLabel = std::make_unique<Label>("Drop or Load");
     dropLabel->setAlwaysOnTop(true);
-    dropLabel->setFont(40.f);
+    dropLabel->setFont(juce::Font (juce::FontOptions{}.withHeight (40.f)));
     addAndMakeVisible(dropLabel.get());
 }
 
@@ -64,7 +64,7 @@ void WaveThumbnail::paint (Graphics& g)
     }
     else
     {
-        dropLabel->setFont(40.f);
+        dropLabel->setFont(juce::Font (juce::FontOptions{}.withHeight (40.f)));
         dropLabel->setText("Drop or Load", NotificationType::sendNotificationAsync);
         dropLabel->setVisible(true);
     }

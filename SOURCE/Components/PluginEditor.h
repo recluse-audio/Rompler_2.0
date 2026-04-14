@@ -11,11 +11,11 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "PluginProcessor.h"
+#include "../Processor/PluginProcessor.h"
 #include "WaveThumbnail.h"
 #include "ADSRComponent.h"
 #include "RompMenu.h"
-#include "PulsarUIFeel.h"
+#include "../LookNFeel/PulsarUIFeel.h"
 #include "DrawableComponent.h"
 
 

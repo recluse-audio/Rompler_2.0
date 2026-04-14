@@ -11,8 +11,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "PluginProcessor.h"
-#include "PulsarUIFeel.h"
+#include "../Processor/PluginProcessor.h"
+#include "../LookNFeel/PulsarUIFeel.h"
 
 //==============================================================================
 /*

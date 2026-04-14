@@ -9,7 +9,7 @@
 */
 
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
+#include "../Components/PluginEditor.h"
 
 //==============================================================================
 RomplerAudioProcessor::RomplerAudioProcessor()
@@ -154,11 +154,9 @@ void RomplerAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     }
     
     MidiMessage m;
-    MidiBuffer::Iterator it { midiMessages };
-    int sample;
-    
-    while (it.getNextEvent (m, sample))
+    for (const auto metadata : midiMessages)
     {
+        m = metadata.getMessage();
         if (m.isNoteOn())
             mIsNotePlayed = true;
         else if (m.isNoteOff())
@@ -216,9 +214,9 @@ void RomplerAudioProcessor::loadFile (const String& path)
     // the reader can be a local variable here since it's not needed by the other classes after this
     std::unique_ptr<AudioFormatReader> reader{ mFormatManager.createReaderFor(file) };
 
-    auto sampleDur = reader->lengthInSamples / reader->sampleRate;
     if (reader)
     {
+        auto sampleDur = reader->lengthInSamples / reader->sampleRate;
         BigInteger range;
         range.setRange(0, 128, true);
         mSampler.addSound(new RomplerSound("Sample", *reader, range, 60, 0.1, 0.1, sampleDur));
@@ -298,10 +296,10 @@ AudioProcessorValueTreeState::ParameterLayout RomplerAudioProcessor::createParam
 {
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
     
-    params.push_back (std::make_unique<AudioParameterFloat>("ATTACK", "Attack", 0.0f, 2.0f, 0.01f));
-    params.push_back (std::make_unique<AudioParameterFloat>("DECAY", "Decay", 0.0f, 2.0f, 2.0f));
-    params.push_back (std::make_unique<AudioParameterFloat>("SUSTAIN", "Sustain", 0.0f, 1.0f, 1.0f));
-    params.push_back (std::make_unique<AudioParameterFloat>("RELEASE", "Release", 0.0f, 2.0f, 0.1f));
+    params.push_back (std::make_unique<AudioParameterFloat>(juce::ParameterID{"ATTACK", 1}, "Attack", juce::NormalisableRange<float>(0.0f, 2.0f), 0.01f));
+    params.push_back (std::make_unique<AudioParameterFloat>(juce::ParameterID{"DECAY", 1}, "Decay", juce::NormalisableRange<float>(0.0f, 2.0f), 2.0f));
+    params.push_back (std::make_unique<AudioParameterFloat>(juce::ParameterID{"SUSTAIN", 1}, "Sustain", juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f));
+    params.push_back (std::make_unique<AudioParameterFloat>(juce::ParameterID{"RELEASE", 1}, "Release", juce::NormalisableRange<float>(0.0f, 2.0f), 0.1f));
     
     return { params.begin(), params.end() };
 }

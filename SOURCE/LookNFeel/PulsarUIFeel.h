@@ -8,7 +8,7 @@
   ==============================================================================
 */
 #pragma once
-#include "JuceHeader.h"
+#include <JuceHeader.h>
 
 class PulsarUIFeel : public juce::LookAndFeel_V4
 {
@@ -43,7 +43,7 @@ public:
 private:
     juce::Font getFont()
     {
-        return juce::Font ("Raleway", "Light", 15.f);
+        return juce::Font (juce::FontOptions{}.withName ("Raleway").withStyle ("Light").withHeight (15.f));
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PulsarUIFeel)

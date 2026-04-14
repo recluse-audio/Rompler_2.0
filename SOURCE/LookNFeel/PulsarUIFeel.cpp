@@ -140,8 +140,8 @@ void PulsarUIFeel::drawLinearSlider (juce::Graphics& g, int x, int y, int width,
         g.drawRoundedRectangle(bgFrame, 5.f, 2.f);
         
         float h = jlimit<float>(1, height, minSliderPos - maxSliderPos);
-        float y = jlimit<float>(2, height - 2, maxSliderPos);
-        juce::Rectangle<float> fillRect(x, y, width, h);
+        float fillY = jlimit<float>(2, height - 2, maxSliderPos);
+        juce::Rectangle<float> fillRect(x, fillY, width, h);
 
         auto color = slider.findColour(Slider::backgroundColourId);
         juce::ColourGradient gradient(color.darker(), width / 2, height, color.withHue(0.5f), width / 2, 0, false);

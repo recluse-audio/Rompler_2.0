@@ -16,7 +16,7 @@ class Artist
 {
 public:
     Artist() {}
-    Artist(juce::String& name) : artistName(name) {} 
+    Artist(const juce::String& name) : artistName(name) {}
     ~Artist() {}
 
     class Category

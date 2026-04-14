@@ -31,7 +31,7 @@ void ADSRComponent::initSliders()
     //mAttackSlider.setRange (0.0f, 5.0f, 0.01f);
     addAndMakeVisible(mAttackSlider);
 
-    mAttackLabel.setFont(10.0f);
+    mAttackLabel.setFont(juce::Font (juce::FontOptions{}.withHeight (10.0f)));
     mAttackLabel.setText("A", NotificationType::dontSendNotification);
     mAttackLabel.setJustificationType(Justification::centredTop);
     mAttackLabel.attachToComponent(&mAttackSlider, false);
@@ -45,7 +45,7 @@ void ADSRComponent::initSliders()
     //mDecaySlider.setRange (0.0f, 5.0f, 0.01f);
     addAndMakeVisible(mDecaySlider);
 
-    mDecayLabel.setFont(10.0f);
+    mDecayLabel.setFont(juce::Font (juce::FontOptions{}.withHeight (10.0f)));
     mDecayLabel.setText("D", NotificationType::dontSendNotification);
     mDecayLabel.setJustificationType(Justification::centredTop);
     mDecayLabel.attachToComponent(&mDecaySlider, false);
@@ -59,7 +59,7 @@ void ADSRComponent::initSliders()
     //mSustainSlider.setRange (0.0f, 1.0f, 0.01f);
     addAndMakeVisible(mSustainSlider);
 
-    mSustainLabel.setFont(10.0f);
+    mSustainLabel.setFont(juce::Font (juce::FontOptions{}.withHeight (10.0f)));
     mSustainLabel.setText("S", NotificationType::dontSendNotification);
     mSustainLabel.setJustificationType(Justification::centredTop);
     mSustainLabel.attachToComponent(&mSustainSlider, false);
@@ -73,7 +73,7 @@ void ADSRComponent::initSliders()
     //mReleaseSlider.setRange (0.0f, 5.0f, 0.01f);
     addAndMakeVisible(mReleaseSlider);
 
-    mReleaseLabel.setFont(10.0f);
+    mReleaseLabel.setFont(juce::Font (juce::FontOptions{}.withHeight (10.0f)));
     mReleaseLabel.setText("R", NotificationType::dontSendNotification);
     mReleaseLabel.setJustificationType(Justification::centredTop);
     mReleaseLabel.attachToComponent(&mReleaseSlider, false);
